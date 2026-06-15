@@ -1,0 +1,494 @@
+/* ── Reset ───────────────────────────────────────────────────────────────── */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+body {
+  background: transparent;
+  overflow: hidden;
+  width: 275px;
+}
+
+/* ═════════════════════════════════════════════════════════════════════════════
+   MAIN PLAYER  275 × 116 px  —  exact Winamp 2.x layout via Webamp sprites
+   All coordinates are absolute from the player's top-left (0,0).
+═════════════════════════════════════════════════════════════════════════════ */
+#player {
+  position: relative;
+  width: 275px;
+  height: 116px;
+  background-image: url('/skin/main.png');
+  background-repeat: no-repeat;
+  background-size: 275px 116px;
+  image-rendering: pixelated;
+  overflow: hidden;
+}
+
+/* ── Title bar (0,0 → 275,14)  titlebar.png overlays the top row ────────── */
+#title-bar {
+  position: absolute;
+  top: 0; left: 0;
+  width: 275px; height: 14px;
+  background-image: url('/skin/titlebar.png');
+  background-repeat: no-repeat;
+  background-size: 275px 14px;
+  image-rendering: pixelated;
+  -webkit-app-region: drag;
+}
+
+/* Window-control buttons inside title bar */
+#btn-minimize,
+#btn-close {
+  position: absolute;
+  top: 3px;
+  width: 9px; height: 9px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  -webkit-app-region: no-drag;
+  padding: 0;
+}
+#btn-minimize { left: 244px; }
+#btn-close    { left: 264px; }
+
+/* Inverted-highlight press effect on title-bar buttons */
+#btn-minimize:active,
+#btn-close:active {
+  filter: brightness(0.6);
+}
+
+/* ── Play/pause indicator (top:28, left:26, 9×9) ──────────────────────── */
+#play-pause {
+  position: absolute;
+  top: 28px; left: 26px;
+  width: 9px; height: 9px;
+  background-image: url('/skin/playpause_play.png');
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  opacity: 0;
+  transition: opacity 0.1s;
+}
+#play-pause.playing { opacity: 1; }
+
+/* ── 4-digit time display ───────────────────────────────────────────────── */
+/* Container: top:26, left:39, 59×13 */
+#time {
+  position: absolute;
+  top: 26px; left: 39px;
+  width: 59px; height: 13px;
+}
+
+/* Each digit: 9×13 sprite */
+.digit {
+  position: absolute;
+  width: 9px; height: 13px;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+}
+/* Digit positions within #time (from Webamp CSS) */
+#d1 { left: 9px; }
+#d2 { left: 21px; }
+#d3 { left: 39px; }
+#d4 { left: 51px; }
+
+/* Digit sprite classes — set by JS */
+.digit.d0 { background-image: url('/skin/digit_0.png'); }
+.digit.d1 { background-image: url('/skin/digit_1.png'); }
+.digit.d2 { background-image: url('/skin/digit_2.png'); }
+.digit.d3 { background-image: url('/skin/digit_3.png'); }
+.digit.d4 { background-image: url('/skin/digit_4.png'); }
+.digit.d5 { background-image: url('/skin/digit_5.png'); }
+.digit.d6 { background-image: url('/skin/digit_6.png'); }
+.digit.d7 { background-image: url('/skin/digit_7.png'); }
+.digit.d8 { background-image: url('/skin/digit_8.png'); }
+.digit.d9 { background-image: url('/skin/digit_9.png'); }
+
+/* ── Scrolling track title (marquee) ────────────────────────────────────── */
+/* Webamp: top:24, left:111, 154×6  — we expand height slightly for CSS text */
+#marquee-wrap {
+  position: absolute;
+  top: 27px; left: 111px;
+  width: 154px; height: 9px;
+  overflow: hidden;
+  white-space: nowrap;
+  -webkit-app-region: no-drag;
+}
+
+#track-title {
+  display: inline-block;
+  vertical-align: top;
+  white-space: nowrap;
+  font-family: 'Arial Narrow', 'Arial', sans-serif;
+  font-size: 8px;
+  font-weight: bold;
+  color: #00e000;
+  line-height: 9px;
+  letter-spacing: 0.2px;
+}
+
+#track-title.scrolling {
+  animation: marquee-scroll 14s linear infinite;
+}
+
+@keyframes marquee-scroll {
+  0%   { transform: translateX(0); }
+  15%  { transform: translateX(0); }
+  80%  { transform: translateX(var(--scroll-px, -200px)); }
+  95%  { transform: translateX(var(--scroll-px, -200px)); }
+  100% { transform: translateX(0); }
+}
+
+/* ── EQ/PL toggle buttons (.windows  top:58, left:219, 46×12) ─────────── */
+.windows {
+  position: absolute;
+  top: 58px; left: 219px;
+  width: 46px; height: 12px;
+  display: flex;
+  -webkit-app-region: no-drag;
+}
+
+.windows button {
+  width: 23px; height: 12px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* Active (toggled-on) state: very subtle darkening */
+.windows button.active {
+  filter: brightness(0.75);
+}
+
+/* ── Volume bar (top:57, left:107, 68×13) ─────────────────────────────── */
+#volume-bar {
+  --vol-y: -308px; /* default ~75% (frame 22 of 29) */
+  position: absolute;
+  top: 57px; left: 107px;
+  width: 68px; height: 13px;
+  -webkit-app-region: no-drag;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url('/skin/volume.png');
+  background-size: 68px 420px;
+  background-position: 0 var(--vol-y);
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  cursor: pointer;
+  outline: none;
+}
+#volume-bar::-webkit-slider-runnable-track {
+  background: transparent;
+  height: 11px;
+}
+#volume-bar::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px; height: 11px;
+  background-image: url('/skin/volume_thumb.png');
+  background-repeat: no-repeat;
+  background-size: 14px 11px;
+  image-rendering: pixelated;
+  cursor: pointer;
+  margin-top: 0;
+}
+
+/* ── Balance bar (top:57, left:177, 38×13) ─────────────────────────────── */
+#balance-bar {
+  position: absolute;
+  top: 57px; left: 177px;
+  width: 38px; height: 13px;
+  -webkit-app-region: no-drag;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url('/skin/balance.png');
+  background-size: 38px 420px;
+  background-position: 0 -196px; /* center (frame 14 of 29) */
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  cursor: pointer;
+  outline: none;
+}
+#balance-bar::-webkit-slider-runnable-track {
+  background: transparent;
+  height: 11px;
+}
+#balance-bar::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px; height: 11px;
+  background-image: url('/skin/balance_thumb.png');
+  background-repeat: no-repeat;
+  background-size: 14px 11px;
+  image-rendering: pixelated;
+  cursor: pointer;
+  margin-top: 0;
+}
+
+/* ── Position / seek bar (top:72, left:16, 248×10) ─────────────────────── */
+#seek-bar {
+  position: absolute;
+  top: 72px; left: 16px;
+  width: 248px; height: 10px;
+  -webkit-app-region: no-drag;
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  cursor: pointer;
+  outline: none;
+}
+#seek-bar::-webkit-slider-runnable-track {
+  background: transparent;
+  height: 10px;
+}
+#seek-bar::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 29px; height: 10px;
+  background-image: url('/skin/posbar_thumb.png');
+  background-repeat: no-repeat;
+  background-size: 29px 10px;
+  image-rendering: pixelated;
+  cursor: pointer;
+  margin-top: 0;
+}
+
+/* ── Transport buttons ───────────────────────────────────────────────────── */
+.transport {
+  position: absolute;
+  top: 88px;
+  background-repeat: no-repeat;
+  background-size: auto;
+  image-rendering: pixelated;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  -webkit-app-region: no-drag;
+}
+
+#btn-prev  { left: 16px;  width: 23px; height: 18px; background-image: url('/skin/btn_prev.png'); }
+#btn-play  { left: 39px;  width: 23px; height: 18px; background-image: url('/skin/btn_play.png'); }
+#btn-pause { left: 62px;  width: 23px; height: 18px; background-image: url('/skin/btn_pause.png'); }
+#btn-stop  { left: 85px;  width: 23px; height: 18px; background-image: url('/skin/btn_stop.png'); }
+#btn-next  { left: 108px; width: 22px; height: 18px; background-image: url('/skin/btn_next.png'); }
+
+/* Active (pressed) state for transport buttons */
+#btn-prev:active,  #btn-prev.active  { background-image: url('/skin/btn_prev_active.png'); }
+#btn-play:active,  #btn-play.active  { background-image: url('/skin/btn_play_active.png'); }
+#btn-pause:active, #btn-pause.active { background-image: url('/skin/btn_pause_active.png'); }
+#btn-stop:active,  #btn-stop.active  { background-image: url('/skin/btn_stop_active.png'); }
+#btn-next:active,  #btn-next.active  { background-image: url('/skin/btn_next_active.png'); }
+
+/* ── Shuffle / Repeat (.shuffle-repeat  top:89, left:164, 74px) ─────────── */
+.shuffle-repeat {
+  position: absolute;
+  top: 89px; left: 164px;
+  width: 74px;
+  display: flex;
+  -webkit-app-region: no-drag;
+}
+
+#btn-shuffle {
+  width: 47px; height: 15px;
+  background-image: url('/skin/shuffle.png');
+  background-repeat: no-repeat;
+  background-size: 47px 15px;
+  image-rendering: pixelated;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+#btn-shuffle.active { background-image: url('/skin/shuffle_active.png'); }
+
+#btn-repeat {
+  width: 28px; height: 15px;
+  background-image: url('/skin/repeat.png');
+  background-repeat: no-repeat;
+  background-size: 28px 15px;
+  image-rendering: pixelated;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+#btn-repeat.active { background-image: url('/skin/repeat_active.png'); }
+
+/* ═════════════════════════════════════════════════════════════════════════════
+   PLAYLIST PANEL  275 × 200 — Winamp skin chrome (always visible below player)
+═════════════════════════════════════════════════════════════════════════════ */
+#queue-panel {
+  display: flex;
+  flex-direction: column;
+  width: 275px;
+  height: 200px;
+}
+
+/* ── Title bar (20px) ─────────────────────────────────────────────────────── */
+#pl-top {
+  display: flex;
+  width: 275px;
+  height: 20px;
+  flex-shrink: 0;
+  -webkit-app-region: drag;
+}
+
+.pl-top-left {
+  width: 25px;
+  height: 20px;
+  background-image: url('/skin/playlist-top-left.png');
+  background-repeat: no-repeat;
+  background-size: 25px 20px;
+  image-rendering: pixelated;
+  flex-shrink: 0;
+}
+
+.pl-top-left-fill {
+  flex: 1;
+  height: 20px;
+  background-image: url('/skin/playlist-top-left-fill.png');
+  background-repeat: repeat-x;
+  background-size: 25px 20px;
+  image-rendering: pixelated;
+}
+
+.pl-top-title {
+  width: 100px;
+  height: 20px;
+  background-image: url('/skin/playlist-top-title.png');
+  background-repeat: no-repeat;
+  background-size: 100px 20px;
+  image-rendering: pixelated;
+  flex-shrink: 0;
+}
+
+.pl-top-right-fill {
+  flex: 1;
+  height: 20px;
+  background-image: url('/skin/playlist-top-right-fill.png');
+  background-repeat: repeat-x;
+  background-size: 25px 20px;
+  background-position: right;
+  image-rendering: pixelated;
+}
+
+.pl-top-right {
+  width: 25px;
+  height: 20px;
+  background-image: url('/skin/playlist-top-right.png');
+  background-repeat: no-repeat;
+  background-size: 25px 20px;
+  image-rendering: pixelated;
+  flex-shrink: 0;
+}
+
+/* ── Middle: left border + list + right border ───────────────────────────── */
+#pl-middle {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.pl-middle-left {
+  width: 12px;
+  flex-shrink: 0;
+  background-image: url('/skin/playlist-middle-left.png');
+  background-repeat: repeat-y;
+  background-size: 12px 29px;
+  image-rendering: pixelated;
+}
+
+.pl-middle-right {
+  width: 20px;
+  flex-shrink: 0;
+  background-image: url('/skin/playlist-middle-right.png');
+  background-repeat: repeat-y;
+  background-size: 20px 29px;
+  background-position: top right;
+  image-rendering: pixelated;
+}
+
+#queue-list {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #000;
+  -webkit-app-region: no-drag;
+}
+
+#queue-list::-webkit-scrollbar       { width: 0; }
+
+/* ── Bottom toolbar (38px) ───────────────────────────────────────────────── */
+#pl-bottom {
+  height: 38px;
+  flex-shrink: 0;
+  position: relative;
+  width: 275px;
+}
+
+.pl-bottom-left {
+  position: absolute;
+  left: 0;
+  width: 125px;
+  height: 38px;
+  background-image: url('/skin/playlist-bottom-left.png');
+  background-repeat: no-repeat;
+  background-size: 125px 38px;
+  image-rendering: pixelated;
+}
+
+.pl-bottom-right {
+  position: absolute;
+  right: 0;
+  width: 150px;
+  height: 38px;
+  background-image: url('/skin/playlist-bottom-right.png');
+  background-repeat: no-repeat;
+  background-size: 150px 38px;
+  image-rendering: pixelated;
+}
+
+/* ── Track list items ────────────────────────────────────────────────────── */
+.queue-item {
+  display: flex;
+  align-items: center;
+  height: 14px;
+  padding: 0 3px;
+  cursor: pointer;
+}
+
+.queue-item:hover   { background: #0a1a1a; }
+.queue-item.playing { background: #003030; }
+
+.qi-num {
+  font-size: 8px;
+  font-family: 'Courier New', monospace;
+  color: #006800;
+  min-width: 20px;
+  flex-shrink: 0;
+  text-align: right;
+  padding-right: 4px;
+}
+.queue-item.playing .qi-num { color: #00f800; }
+
+.qi-name {
+  flex: 1;
+  font-size: 9px;
+  font-family: 'Courier New', monospace;
+  color: #00f800;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.queue-item:hover   .qi-name { color: #72ff72; }
+.queue-item.playing .qi-name { color: #ffffff; }
+
+.qi-duration {
+  font-size: 8px;
+  font-family: 'Courier New', monospace;
+  color: #006800;
+  min-width: 32px;
+  text-align: right;
+  flex-shrink: 0;
+  padding-left: 4px;
+}
+.queue-item.playing .qi-duration { color: #00f800; }

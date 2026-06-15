@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self'" />
+    <title>YTMusic Winamp</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+
+    <!-- ── MAIN PLAYER (275×116) ─────────────────────────────────────────── -->
+    <div id="player">
+
+      <!-- Title bar: titlebar.png sprite at top 0–14px -->
+      <div id="title-bar">
+        <button id="btn-minimize" title="Minimize"></button>
+        <button id="btn-close"    title="Close"></button>
+      </div>
+
+      <!-- Play/pause indicator dot (top:28, left:26, 9×9) -->
+      <div id="play-pause"></div>
+
+      <!-- 4-digit time display (container top:26, left:39) -->
+      <div id="time">
+        <div id="d1" class="digit"></div>
+        <div id="d2" class="digit"></div>
+        <div id="d3" class="digit"></div>
+        <div id="d4" class="digit"></div>
+      </div>
+
+      <!-- Scrolling track title (top:27, left:111, width:154) -->
+      <div id="marquee-wrap">
+        <span id="track-title">NO MEDIA LOADED</span>
+      </div>
+
+      <!-- EQ=PL toggle / PL=YTM toggle  (.windows top:58, left:219) -->
+      <div class="windows">
+        <button id="btn-ytm" title="YouTube Music"></button>
+      </div>
+
+      <!-- Volume range (top:57, left:107, 68×13) -->
+      <input type="range" id="volume-bar" min="0" max="100" value="75" />
+
+      <!-- Balance range (top:57, left:177, 38×13) -->
+      <input type="range" id="balance-bar" min="-100" max="100" value="0" />
+
+      <!-- Position / seek bar (top:72, left:16, 248×10) -->
+      <input type="range" id="seek-bar" min="0" max="100" value="0" step="0.1" />
+
+      <!-- Transport buttons -->
+      <button id="btn-prev"  class="transport" title="Previous"></button>
+      <button id="btn-play"  class="transport" title="Play"></button>
+      <button id="btn-pause" class="transport" title="Pause"></button>
+      <button id="btn-stop"  class="transport" title="Stop"></button>
+      <button id="btn-next"  class="transport" title="Next"></button>
+
+      <!-- Shuffle / Repeat (.shuffle-repeat top:89, left:164) -->
+      <div class="shuffle-repeat">
+        <button id="btn-shuffle" title="Shuffle"></button>
+        <button id="btn-repeat"  title="Repeat"></button>
+      </div>
+
+    </div>
+
+    <!-- ── PLAYLIST PANEL (275×200, always below player) ────────────────── -->
+    <div id="queue-panel">
+
+      <!-- Title bar sprites (20px) -->
+      <div id="pl-top">
+        <div class="pl-top-left"></div>
+        <div class="pl-top-left-fill"></div>
+        <div class="pl-top-title"></div>
+        <div class="pl-top-right-fill"></div>
+        <div class="pl-top-right"></div>
+      </div>
+
+      <!-- Scrollable list with side borders -->
+      <div id="pl-middle">
+        <div class="pl-middle-left"></div>
+        <div id="queue-list"></div>
+        <div class="pl-middle-right"></div>
+      </div>
+
+      <!-- Bottom toolbar sprites (38px) -->
+      <div id="pl-bottom">
+        <div class="pl-bottom-left"></div>
+        <div class="pl-bottom-right"></div>
+      </div>
+
+    </div>
+
+    <script type="module" src="./app.ts"></script>
+  </body>
+</html>
