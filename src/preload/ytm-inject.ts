@@ -102,9 +102,11 @@ interface QueueItem {
 }
 
 function readQueue(): QueueItem[] {
-  const nodes = document.querySelectorAll('ytmusic-player-queue-item')
+  // Prefer items scoped to the queue panel to avoid duplicates from other components
+  let nodes = document.querySelectorAll('ytmusic-player-queue ytmusic-player-queue-item')
+  if (!nodes.length) nodes = document.querySelectorAll('ytmusic-player-queue-item')
   if (!nodes.length) return []
-  return Array.from(nodes).slice(0, 60).map(node => {
+  const raw = Array.from(nodes).slice(0, 60).map(node => {
     const el = node as HTMLElement
     const title =
       (el.querySelector('.song-title') as HTMLElement | null)?.title ||
@@ -125,6 +127,20 @@ function readQueue(): QueueItem[] {
     const selected = el.hasAttribute('selected') || el.classList.contains('selected')
     return { title, artist, duration, selected }
   })
+
+  // Deduplicate by title+artist (YTM renders some items in multiple queue sections)
+  const seen = new Map<string, number>()
+  const deduped: QueueItem[] = []
+  for (const item of raw) {
+    const key = item.title || item.artist ? `${item.title}||${item.artist}` : null
+    if (key && seen.has(key)) {
+      if (item.selected) deduped[seen.get(key)!].selected = true
+      continue
+    }
+    if (key) seen.set(key, deduped.length)
+    deduped.push({ ...item })
+  }
+  return deduped
 }
 
 let lastQueueLen = 0
@@ -155,7 +171,8 @@ ipcRenderer.on('ytm:command', (_event, cmd: string, arg?: number) => {
       break
     case 'queue-click': {
       if (arg === undefined) break
-      const items = document.querySelectorAll('ytmusic-player-queue-item')
+      let items = document.querySelectorAll('ytmusic-player-queue ytmusic-player-queue-item')
+      if (!items.length) items = document.querySelectorAll('ytmusic-player-queue-item')
       const currentIdx = Array.from(items).findIndex(
         el => el.hasAttribute('selected') || el.classList.contains('selected')
       )
