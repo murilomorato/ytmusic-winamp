@@ -153,6 +153,9 @@ api.onState((state: PlayerState) => {
 const queueList  = document.getElementById('queue-list')
 const queueCount = document.getElementById('queue-count')
 
+let lastClickIndex = -1
+let lastClickTime  = 0
+
 api.onQueue((items: QueueItem[]) => {
   if (!queueList) return
   queueList.innerHTML = ''
@@ -180,7 +183,20 @@ api.onQueue((items: QueueItem[]) => {
     durEl.textContent = item.duration
 
     row.append(numEl, nameEl, durEl)
-    row.addEventListener('click', () => api.clickQueueItem(index))
+    row.addEventListener('click', () => {
+      const now = Date.now()
+      const diff = now - lastClickTime
+      if (lastClickIndex === index && diff < 600) {
+        api.clickQueueItem(index)
+        lastClickIndex = -1
+        lastClickTime  = 0
+      } else {
+        queueList!.querySelectorAll('.queue-item.selected').forEach(el => el.classList.remove('selected'))
+        row.classList.add('selected')
+        lastClickIndex = index
+        lastClickTime  = now
+      }
+    })
     queueList.appendChild(row)
   })
 

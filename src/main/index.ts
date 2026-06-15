@@ -27,6 +27,7 @@ function createSkinWindow(): void {
     skinWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
 
+
   skinWindow.on('closed', () => {
     skinWindow = null
     app.quit()

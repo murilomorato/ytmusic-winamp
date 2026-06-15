@@ -156,11 +156,21 @@ ipcRenderer.on('ytm:command', (_event, cmd: string, arg?: number) => {
     case 'queue-click': {
       if (arg === undefined) break
       const items = document.querySelectorAll('ytmusic-player-queue-item')
-      const target = items[arg] as HTMLElement | undefined
-      const clickable = (
-        target?.querySelector('.song-title, .item-main-content, .flex-columns') ?? target
-      ) as HTMLElement | undefined
-      clickable?.click()
+      const currentIdx = Array.from(items).findIndex(
+        el => el.hasAttribute('selected') || el.classList.contains('selected')
+      )
+      const from = currentIdx >= 0 ? currentIdx : 0
+      const diff = arg - from
+      if (diff === 0) { setTimeout(sendQueue, 400); break }
+
+      const btn = document.querySelector<HTMLElement>(
+        diff > 0 ? '.next-button' : '.previous-button'
+      )
+      if (!btn) { setTimeout(sendQueue, 400); break }
+
+      const steps = Math.abs(diff)
+      for (let i = 0; i < steps; i++) btn.click()
+
       setTimeout(sendQueue, 400)
       break
     }

@@ -508,8 +508,9 @@ body {
   cursor: pointer;
 }
 
-.queue-item:hover   { background: #0a1a1a; }
-.queue-item.playing { background: #003030; }
+.queue-item:hover            { background: #0a1a1a; }
+.queue-item.selected         { background: #003300; }
+.queue-item.playing          { background: #003030; }
 
 .qi-num {
   font-size: 8px;
