@@ -107,6 +107,22 @@ body {
 .digit.d8 { background-image: url('/skin/digit_8.png'); }
 .digit.d9 { background-image: url('/skin/digit_9.png'); }
 
+/* ── kbps / kHz info display (top:43) ──────────────────────────────────── */
+#info-kbps,
+#info-khz {
+  position: absolute;
+  top: 43px;
+  font-family: 'Arial Narrow', Arial, sans-serif;
+  font-size: 7px;
+  font-weight: bold;
+  color: #00e000;
+  line-height: 7px;
+  letter-spacing: 0.3px;
+  pointer-events: none;
+}
+#info-kbps { left: 111px; }
+#info-khz  { left: 156px; }
+
 /* ── Scrolling track title (marquee) ────────────────────────────────────── */
 /* Webamp: top:24, left:111, 154×6  — we expand height slightly for CSS text */
 #marquee-wrap {
@@ -164,20 +180,56 @@ body {
   filter: brightness(0.75);
 }
 
+/* ── YouTube Music toggle button (mesmo estilo visual do shuffle) ──────── */
+#btn-ytm {
+  width: 46px;
+  font-family: 'Arial Narrow', Arial, sans-serif;
+  font-size: 7px;
+  font-weight: bold;
+  color: #000000;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: -2px;
+  background: #bdced6;
+  border-top: 1px solid #aab2c3 !important;
+  border-left: 1px solid #aab2c3 !important;
+  border-bottom: 1px solid #4a5a6b !important;
+  border-right: 1px solid #4a5a6b !important;
+  box-shadow: inset 1px 1px 0 #efffff, inset -1px -1px 0 #acb4c4;
+}
+#btn-ytm::before {
+  content: 'PLAYLIST';
+}
+#btn-ytm:hover {
+  background: #a8bcc6;
+}
+
 /* ── Volume bar (top:57, left:107, 68×13) ─────────────────────────────── */
-#volume-bar {
-  --vol-y: -308px; /* default ~75% (frame 22 of 29) */
+#volume-bg {
   position: absolute;
   top: 57px; left: 107px;
   width: 68px; height: 13px;
+  background-image: url('/skin/volume.png');
+  background-size: 68px 420px;
+  background-position: 0 -300px;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+
+#volume-bar {
+  position: absolute;
+  top: 57px; left: 107px;
+  width: 68px; height: 13px;
+  margin: 0;
+  padding: 0;
   -webkit-app-region: no-drag;
   appearance: none;
   -webkit-appearance: none;
-  background-image: url('/skin/volume.png');
-  background-size: 68px 420px;
-  background-position: 0 var(--vol-y);
-  background-repeat: no-repeat;
-  image-rendering: pixelated;
+  background: transparent;
   cursor: pointer;
   outline: none;
 }

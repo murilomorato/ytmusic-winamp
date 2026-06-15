@@ -43,12 +43,8 @@ document.getElementById('btn-close')?.addEventListener('click', () => window.clo
 document.getElementById('btn-minimize')?.addEventListener('click', () => api.minimize())
 
 // ── YTM window toggle ──────────────────────────────────────────────────────
-const btnYtm = document.getElementById('btn-ytm')
-let ytmVisible = false
-btnYtm?.addEventListener('click', () => {
+document.getElementById('btn-ytm')?.addEventListener('click', () => {
   api.toggleYtmWindow()
-  ytmVisible = !ytmVisible
-  btnYtm.classList.toggle('active', ytmVisible)
 })
 
 // ── Transport buttons ──────────────────────────────────────────────────────
@@ -75,7 +71,17 @@ seekBar?.addEventListener('change', () => api.seek(Number(seekBar!.value)))
 
 // ── Volume slider ──────────────────────────────────────────────────────────
 const volumeBar = document.getElementById('volume-bar') as HTMLInputElement | null
-volumeBar?.addEventListener('input', () => api.setVolume(Number(volumeBar!.value) / 100))
+const volumeBg  = document.getElementById('volume-bg')  as HTMLElement | null
+
+function updateVolumeBg(vol: number) {
+  if (volumeBg) volumeBg.style.backgroundPosition = `0 -${Math.round(vol * 27) * 15}px`
+}
+
+volumeBar?.addEventListener('input', () => {
+  const vol = Number(volumeBar!.value) / 100
+  api.setVolume(vol)
+  updateVolumeBg(vol)
+})
 
 // ── Digit time display ─────────────────────────────────────────────────────
 function setDigit(id: string, n: number) {
@@ -139,7 +145,7 @@ api.onState((state: PlayerState) => {
   if (volumeBar && !volumeBar.matches(':active')) {
     const vol = state.volume ?? 0.75
     volumeBar.value = String(Math.round(vol * 100))
-    volumeBar.style.setProperty('--vol-y', `${-Math.round(vol * 29) * 14}px`)
+    updateVolumeBg(vol)
   }
 })
 
@@ -182,4 +188,5 @@ api.onQueue((items: QueueItem[]) => {
 })
 
 // ── Boot ───────────────────────────────────────────────────────────────────
-setTime(0)  // show 0:00 digits on startup
+setTime(0)
+updateVolumeBg(0.75)  // frame 20 × 15px = -300px
